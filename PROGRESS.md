@@ -11,6 +11,7 @@
 
 ## IMPLEMENTATION 라운드 로그
 - R9 spec-9: 입력 배선 구현 시작. 골든: many=[c01,c03,c06,c07], 검색 "카페"=[c01,c03,c06], 점수순 첫 항목 c03.
+- R10 spec-8: 점수 분해 렌더 구현. 골든: c03={3,1,1,5}, c05={1,0,0,1}.
 
 ## 상태
 - [x] **S1** 데이터 로드·렌더 — `src/cafes.ts`(타입+시드 번들), `src/render.ts`(renderCafeList), `src/main.ts`. 시드 10곳 DOM 렌더 + 번들=골든 대조. green.

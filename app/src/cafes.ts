@@ -48,6 +48,21 @@ export function score(cafe: Cafe): number {
   return OUTLET_RANK[cafe.outlets] + (cafe.wifi ? 1 : 0) + (cafe.open24h ? 1 : 0)
 }
 
+export interface ScoreBreakdown {
+  outlets: number
+  wifi: number
+  open24h: number
+  sum: number
+}
+
+/** 점수 설명용 구성요소. 합계는 score(cafe)와 같아야 한다. */
+export function scoreBreakdown(cafe: Cafe): ScoreBreakdown {
+  const outlets = OUTLET_RANK[cafe.outlets]
+  const wifi = cafe.wifi ? 1 : 0
+  const open24h = cafe.open24h ? 1 : 0
+  return { outlets, wifi, open24h, sum: outlets + wifi + open24h }
+}
+
 /** 점수 내림차순 정렬, 동점은 id 오름차순. 입력 불변(새 배열 반환). */
 export function sortByScore(list: Cafe[]): Cafe[] {
   return [...list].sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id))
