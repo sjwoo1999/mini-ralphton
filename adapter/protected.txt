@@ -1,6 +1,8 @@
-# 답안지 보호 집합 — pre_guard.py와 harness/verify.sh가 공용하는 단일 진실원 (실패노트 #2/#7)
-# 형식: 한 줄 하나. 디렉토리는 트레일링 슬래시. #로 시작하면 주석. 전부 git tracked 필수 (verify ④-1 전제).
+# 답안지 보호 집합 — 단일 진실원 (#2/#7). 전부 git tracked 필수.
 harness/
 adapter/
 .claude/
-# TODO: 워크로드 불변 영역 추가 — 루프가 못 건드릴 골든 데이터/설정 (예: app/tests/protected/, app/package.json)
+app/tests/protected/
+app/package.json
+app/tsconfig.json
+app/vitest.config.ts

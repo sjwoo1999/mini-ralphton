@@ -1,4 +1,4 @@
-# SPEC — 카공지도 v0.1: 목록+필터 세로 슬라이스 (기계 계약: harness/ADAPTER-CONTRACT.md §3)
+# SPEC — 카공지도 v0.2: 검색+점수 표시 (기계 계약: harness/ADAPTER-CONTRACT.md §3)
 
 > 제품: "카페에서 공부하기 좋은 곳"을 찾는 지도 앱. v0.1은 지도 없이 **목록+필터 코어 로직**만 (지도는 BACKLOG 항목2).
 > 데이터 = `app/tests/protected/cafes.seed.json` (골든, 수정 금지) — 앱은 같은 스키마의 데이터를 `src/data/cafes.json`으로 두고 번들한다(내용은 시드와 동일해야 하며 테스트가 대조).
@@ -8,6 +8,9 @@
 - [S2] 콘센트 필터: `outlets` 필터(many/some/few 최소등급 선택) 적용 시 목록이 정확히 그 부분집합으로 갱신 — 시드 기준 many=4곳 단언 포함
 - [S3] 복합 필터: wifi=true AND open24h=true 교집합 — 시드 기준 정확히 3곳(c03,c06,c09) 단언
 - [S4] 공부적합도 점수: `score(cafe) = outlets등급(many3/some2/few1) + wifi(1) + open24h(1)` 순수함수 + 목록이 점수 내림차순 정렬 — 동점은 id 오름차순 타이브레이크, 시드 기준 1위 c03 단언
+
+- [S5] 이름 검색: 입력 문자열 부분일치(대소문자 무시)로 목록 필터 — "카페" 검색 시 시드 기준 3곳(c01·c03·c06) 단언
+- [S6] 점수 배지: 각 목록 항목에 S4 점수를 "공부적합 N점" 텍스트로 표시 — c03 항목에 "5점" 단언
 
 ## 가정 — 루프가 택한 해석 (S-ID 없음, 사람이 ‹CONFIRM›으로 닫음)
 - [A1] 스택: Vite+TS+vitest/jsdom (1호 GPX 동일 — 앱 셸 제공됨). 지도(Leaflet)는 v0.1 범위 밖, jsdom 렌더 테스트 금지(1호 교훈) ‹CONFIRM›

@@ -1,35 +1,43 @@
-# adapter/ladder.sh — <워크로드명> 카트리지 (당일 고지용 뼈대)
-# 정본 계약: harness/ADAPTER-CONTRACT.md — 이 문서만 읽고 5함수를 채울 수 있어야 함.
-# 주입: $ROOT $APP $ST, fail() 제공. 캐시 언어(Python .pyc 등)는 캐시 무력화 필수(#16: -B + purge).
-# 참고 구현: 1호(TS/vitest) mini-ralphton, 2호(Python/coverage) ralphton-2-prdmas 의 adapter/ladder.sh
+# adapter/ladder.sh — 워크로드별 판정 사다리 (전용층 카트리지)
+# 계약: harness/verify.sh가 source한 뒤 아래 5함수를 순서대로 호출. (정본: harness/ADAPTER-CONTRACT.md)
+#   환경 주입: $ROOT $APP $ST, fail() 제공.
+#   ladder_typecheck / ladder_build : 실패 시 fail "<이유>" 호출
+#   ladder_test                     : 종료코드만 반환 (verify 골격이 판정 — green set 기록 후)
+#   ladder_green                    : $ST/verify-report.json 에 {"green_ids":[...]} 기록
+#   MR_REVERSE=1 (재현성 2차에서 주입): 이 어댑터(vitest)는 미지원 = no-op — 2차는 격리 HOME 효과만 (#17 장착≠작동. 정직표: ADAPTER-CONTRACT §5)
+# 워크로드 교체 = 이 파일의 함수 본문만 교체 (Python이면 mypy/pytest, Go면 go vet/go test ...)
 
 ladder_typecheck() {
-  fail "TODO: 타입/문법 검사 (예: npx tsc --noEmit / \$PY -B -m compileall / go vet)"
+  (cd "$APP" && npx tsc --noEmit) || fail "tsc"
 }
 
 ladder_test() {
-  # 종료코드만 반환 — 판정은 verify 골격. 러너가 없는 워크로드(변환기 등)면
-  # 골든 입출력쌍 채점기를 테스트 스위트로 작성하라 (CONTRACT §2 — "러너가 없다"는 "아직 안 만들었다").
-  # 채점 결과를 ladder_green에 넘기려면 $ST 사설 파일을 써라 (예: $ST/.grade-out — CONTRACT §7).
-  # MR_REVERSE는 반드시 "${MR_REVERSE:-0}" 가드로 읽어라 — 1차 호출 땐 미정의라 set -u 크래시 (#21).
-  # 재현성 2차에서 test+green이 1회 더 불린다 — 두 함수는 멱등해야 함 (CONTRACT §1).
-  return 1  # TODO
+  # vitest 1회 (JSON + coverage). flaky 방어는 stop_gate의 "2연속 green"이 담당 (개선 ②)
+  (cd "$APP" && npx vitest run --reporter=json --outputFile="$ST/vitest.json" --coverage)
 }
 
 ladder_green() {
-  # $ST/verify-report.json 에 {"green_ids":["S1",...]} 기록 — 기계 판정으로 충족된 S-ID만 (CONTRACT §2)
-  printf '{"green_ids":[]}' > "$ST/verify-report.json"  # TODO
+  node "$ROOT/adapter/green_set.js" "$ST/vitest.json" > "$ST/verify-report.json"   # vitest 전용이라 adapter 소속 (#19 엔진 경계 정리)
 }
 
 ladder_build() {
-  :  # 빌드 단계 없으면 이대로 (no-op)
+  (cd "$APP" && npx vite build) || fail "build"
+  [ -s "$APP/dist/index.html" ] || fail "build 산출물 없음"
 }
 
 ladder_gaming() {
-  # skip류 금지 grep + 래칫. baseline의 1은 바닥값일 뿐 — 실측값으로 올려 고정하고
-  # 음성 대조군(min=실측+1 → fail)을 한 번 실증할 것 (#17. 0으로 두면 no-op 방어).
-  # 함정 2개 (#21 드릴 실측): ① 금지 grep이 정당한 코드(sys.exit(0 if ok else 1) 등)를 오탐하지 않게
-  #   패턴을 좁혀라 ② 단언 카운트 grep은 헬퍼 "정의(def check)"와 docstring 산문을 제외하라 — 유령 카운트.
-  # ③ fail 메시지에 변수를 쓸 땐 반드시 ${var} 중괄호 — $var직후한글 은 unbound variable 크래시 (#21).
-  fail "TODO: 게이밍 검사 (예: skip/only 금지 + min_assertion_count 래칫)"
+  # TS/vitest 전용 게이밍 검사 (v2-1 엔진에서 adapter로 이동 — 언어 종속이므로)
+  grep -rEn '\.(skip|only|todo)\(|@ts-nocheck|@ts-ignore' "$APP/src" "$APP/tests" 2>/dev/null && fail "skip/only/ts-ignore 발견"
+  local TC AC MIN_T MIN_A
+  TC=$(grep -rEoh "it\(|test\(" "$APP/tests" 2>/dev/null | wc -l | tr -d ' ')
+  AC=$(grep -rEoh "expect\(" "$APP/tests" 2>/dev/null | wc -l | tr -d ' ')
+  MIN_T=$(python3 -c "import json;print(json.load(open('$ROOT/adapter/baseline.json'))['min_test_count'])")
+  MIN_A=$(python3 -c "import json;print(json.load(open('$ROOT/adapter/baseline.json'))['min_assertion_count'])")
+  [ "$TC" -ge "$MIN_T" ] || fail "테스트 수 ratchet ($TC < $MIN_T)"
+  [ "$AC" -ge "$MIN_A" ] || fail "assertion 밀도 ratchet ($AC < $MIN_A)"
+  # S-ID ↔ 테스트 태그 대응 (SPEC 체크리스트가 진실원, "verify 레벨" 항목 제외)
+  local sid
+  for sid in $(grep -E '^\- \[S[0-9]+\]' "$ROOT/adapter/SPEC.md" | grep -v 'verify 레벨' | grep -oE 'S[0-9]+' | sort -uV); do
+    grep -rq "\[$sid\]" "$APP/tests" || fail "SPEC 항목 $sid 대응 테스트 없음"
+  done
 }
