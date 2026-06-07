@@ -1,4 +1,4 @@
-# SPEC — 카공지도 v0.5: 좌석규모 필터 누적 (기계 계약: harness/ADAPTER-CONTRACT.md §3)
+# SPEC — 카공지도 v0.6: 점수 등급 배지 누적 (기계 계약: harness/ADAPTER-CONTRACT.md §3)
 
 > 제품: "카페에서 공부하기 좋은 곳"을 찾는 지도 앱. v0.1은 지도 없이 **목록+필터 코어 로직**만 (지도는 BACKLOG 항목2).
 > 데이터 = `app/tests/protected/cafes.seed.json` (골든, 수정 금지) — 앱은 같은 스키마의 데이터를 `src/data/cafes.json`으로 두고 번들한다(내용은 시드와 동일해야 하며 테스트가 대조).
@@ -17,6 +17,8 @@
 - [S8] 즐겨찾기: localStorage 키 `kagong:favorites` — `toggleFavorite(id)`/`getFavorites()`/`isFavorite(id)` + 목록 항목에 ★ 토글 표시. 단언: 토글→포함·재토글→제거·**새 인스턴스가 localStorage에서 복원**·미저장 시 `[]`. 테스트는 beforeEach에서 `localStorage.clear()` 필수(누수 flaky 방지)
 
 - [S9] 좌석규모 필터: `seats >= 50` "대형" 필터 — 단언: 시드 기준 정확히 3곳 `c03·c06·c07` (id 집합 일치)
+
+- [S10] 등급 배지: `tier(score)` 순수함수 — 5점=S / 4점=A / 3점 이하=B. 목록 항목에 "[S]"류 배지 표시. 단언: 시드 기준 S={c03,c06}·A={c01,c07,c09}·B=5곳 (집합 일치) + c03 항목에 S배지 DOM 존재
 
 ## 가정 — 루프가 택한 해석 (S-ID 없음, 사람이 ‹CONFIRM›으로 닫음)
 - [A1] 스택: Vite+TS+vitest/jsdom (1호 GPX 동일 — 앱 셸 제공됨). 지도(Leaflet)는 v0.1 범위 밖, jsdom 렌더 테스트 금지(1호 교훈) ‹CONFIRM›
