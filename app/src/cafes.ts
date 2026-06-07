@@ -22,3 +22,8 @@ export const OUTLET_RANK: Record<Outlets, number> = { many: 3, some: 2, few: 1 }
 export function filterByOutlets(list: Cafe[], min: Outlets): Cafe[] {
   return list.filter(c => OUTLET_RANK[c.outlets] >= OUTLET_RANK[min])
 }
+
+/** wifi ∧ open24h 교집합 (밤샘 공부 적합). */
+export function filterByWifiAndOpen24h(list: Cafe[]): Cafe[] {
+  return list.filter(c => c.wifi && c.open24h)
+}
