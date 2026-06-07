@@ -27,3 +27,13 @@ export function filterByOutlets(list: Cafe[], min: Outlets): Cafe[] {
 export function filterByWifiAndOpen24h(list: Cafe[]): Cafe[] {
   return list.filter(c => c.wifi && c.open24h)
 }
+
+/** 공부적합도 점수 = 콘센트등급(many3/some2/few1) + wifi(1) + open24h(1). 순수함수. */
+export function score(cafe: Cafe): number {
+  return OUTLET_RANK[cafe.outlets] + (cafe.wifi ? 1 : 0) + (cafe.open24h ? 1 : 0)
+}
+
+/** 점수 내림차순 정렬, 동점은 id 오름차순. 입력 불변(새 배열 반환). */
+export function sortByScore(list: Cafe[]): Cafe[] {
+  return [...list].sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id))
+}
