@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vitest:*)", "Bash(npx tsc:*)", "Bash(npx vite:*)", "Bash(node:*)",
+      "Bash(git:*)", "Bash(bash harness/verify.sh)", "Bash(mkdir:*)", "Bash(ls:*)", "Bash(cat:*)",
+      "Bash(npm install)", "Bash(python3:*)", "Bash(bash harness/verify.sh:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [{ "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+      "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre_guard.py\"" }] }],
+    "PostToolUse": [{ "matcher": "*",
+      "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/post_heartbeat.py\"" }] }],
+    "Stop": [{ "matcher": "",
+      "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop_gate.py\"", "timeout": 600 }] }]
+  }
+}

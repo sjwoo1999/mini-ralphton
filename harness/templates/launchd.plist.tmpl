@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>{{LABEL}}</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/bash</string>
+    <string>{{ROOT}}/harness/watchdog.sh</string>
+  </array>
+  <key>StartInterval</key><integer>180</integer>
+  <!-- 실패 5: launchd는 작업 종료 시 자식 프로세스 그룹을 청소 — 워치독이 띄운 claude가 즉사.
+       AbandonProcessGroup=true 로 부활아를 살려둔다 -->
+  <key>AbandonProcessGroup</key><true/>
+  <key>EnvironmentVariables</key><dict>
+    <key>PATH</key><string>{{HOME}}/.local/bin:{{HOME}}/.local/share/fnm/aliases/default/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    <key>HOME</key><string>{{HOME}}</string>
+  </dict>
+  <key>StandardOutPath</key><string>{{ROOT}}/state/watchdog.log</string>
+  <key>StandardErrorPath</key><string>{{ROOT}}/state/watchdog.log</string>
+</dict></plist>

@@ -1,8 +1,4 @@
 state/
-node_modules/
-dist/
-auth.json
-*.sqlite
-.codex/
-.env
-*.toml
+app/node_modules/
+app/dist/
+app/coverage/

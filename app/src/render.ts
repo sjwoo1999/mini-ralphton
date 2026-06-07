@@ -1,55 +1,35 @@
-import { GameState, transition } from './game';
+import { score, type Cafe } from './cafes'
+import { isFavorite } from './favorites'
 
-export type RenderModel = {
-  state: GameState;
-  score: number;
-  milestone?: number | null;
-};
-
-export function render(root: HTMLElement, model: RenderModel): void {
-  root.innerHTML = '';
-
-  const title = document.createElement('h1');
-  title.textContent = 'Busan Gull Runner';
-  root.append(title);
-
-  const gull = document.createElement('div');
-  gull.dataset.role = 'gull';
-  gull.textContent = 'seagull';
-  root.append(gull);
-
-  const obstacle = document.createElement('div');
-  obstacle.dataset.role = 'obstacle';
-  obstacle.textContent = 'obstacle';
-  root.append(obstacle);
-
-  const scoreNode = document.createElement('output');
-  scoreNode.dataset.role = 'score';
-  scoreNode.textContent = String(model.score);
-  root.append(scoreNode);
-
-  if (model.state === 'gameover') {
-    const retry = document.createElement('button');
-    retry.textContent = '다시 도전';
-    root.append(retry);
-  }
-
-  if (model.milestone) {
-    const burst = document.createElement('div');
-    burst.className = 'burst';
-    burst.textContent = String(model.milestone);
-    root.append(burst);
-  }
+const OUTLET_LABEL: Record<Cafe['outlets'], string> = {
+  many: '콘센트 많음',
+  some: '콘센트 보통',
+  few: '콘센트 적음',
 }
 
-export function attachSpaceHandler(target: Document, getState: () => GameState, setState: (state: GameState) => void, onJump: () => void): void {
-  target.addEventListener('keydown', (event) => {
-    if (event.code !== 'Space') return;
-    const state = getState();
-    if (state === 'playing') {
-      onJump();
-      return;
-    }
-    setState(transition(state, 'space'));
-  });
+/** 카페 목록을 컨테이너에 렌더한다(기존 내용은 비운다). 순수 DOM — 지도 없음(v0.1). */
+export function renderCafeList(container: HTMLElement, list: Cafe[]): void {
+  container.replaceChildren()
+  const ul = document.createElement('ul')
+  ul.className = 'cafe-list'
+  for (const cafe of list) {
+    const li = document.createElement('li')
+    li.className = 'cafe-item'
+    li.setAttribute('data-cafe-id', cafe.id)
+    const badges = [
+      OUTLET_LABEL[cafe.outlets],
+      cafe.wifi ? '와이파이' : null,
+      cafe.open24h ? '24시간' : null,
+    ].filter(Boolean).join(' · ')
+    const fav = isFavorite(cafe.id)
+    li.innerHTML =
+      `<span class="cafe-name">${cafe.name}</span>` +
+      `<span class="cafe-seats">${cafe.seats}석</span>` +
+      `<span class="cafe-score">공부적합 ${score(cafe)}점</span>` +
+      `<span class="cafe-badges">${badges}</span>` +
+      `<button class="cafe-fav" type="button" data-fav-id="${cafe.id}"` +
+      ` aria-pressed="${fav}" aria-label="즐겨찾기">${fav ? '★' : '☆'}</button>`
+    ul.appendChild(li)
+  }
+  container.appendChild(ul)
 }

@@ -1,0 +1,12 @@
+[
+  {"id":"c01","name":"카페 그라운드 합정","lat":37.5495,"lng":126.9137,"outlets":"many","wifi":true,"open24h":false,"seats":48},
+  {"id":"c02","name":"스테이 커피 망원","lat":37.5556,"lng":126.9019,"outlets":"some","wifi":true,"open24h":false,"seats":22},
+  {"id":"c03","name":"논스톱 스터디카페 신촌","lat":37.5598,"lng":126.9423,"outlets":"many","wifi":true,"open24h":true,"seats":80},
+  {"id":"c04","name":"브루웍스 홍대","lat":37.5535,"lng":126.9220,"outlets":"few","wifi":true,"open24h":false,"seats":35},
+  {"id":"c05","name":"달빛다방 연남","lat":37.5621,"lng":126.9255,"outlets":"few","wifi":false,"open24h":false,"seats":18},
+  {"id":"c06","name":"24h 카페인 강남","lat":37.4980,"lng":127.0276,"outlets":"many","wifi":true,"open24h":true,"seats":64},
+  {"id":"c07","name":"콘센트가득 성수","lat":37.5446,"lng":127.0559,"outlets":"many","wifi":true,"open24h":false,"seats":52},
+  {"id":"c08","name":"조용한오후 서촌","lat":37.5794,"lng":126.9706,"outlets":"some","wifi":true,"open24h":false,"seats":16},
+  {"id":"c09","name":"밤샘책방 건대","lat":37.5404,"lng":127.0696,"outlets":"some","wifi":true,"open24h":true,"seats":40},
+  {"id":"c10","name":"테라스뷰 이태원","lat":37.5345,"lng":126.9946,"outlets":"few","wifi":false,"open24h":false,"seats":28}
+]

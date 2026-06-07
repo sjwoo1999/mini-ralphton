@@ -1,0 +1,8 @@
+# 답안지 보호 집합 — 단일 진실원 (#2/#7). 전부 git tracked 필수.
+harness/
+adapter/
+.claude/
+app/tests/protected/
+app/package.json
+app/tsconfig.json
+app/vitest.config.ts
