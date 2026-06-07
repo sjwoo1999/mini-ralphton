@@ -1,0 +1,6 @@
+state/
+node_modules/
+auth.json
+*.sqlite
+.codex/
+.env
