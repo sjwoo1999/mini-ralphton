@@ -2,6 +2,7 @@
 # harness/test_backlog_smoke.sh — backlog_advance.sh 실행 스모크 (#18 3차 재발 봉합, 10-감사 T9~T12 설계 + 안전핀 음성대조군)
 # start_run을 PATH가 아닌 "같은 자리 스텁"으로 가로채(advance가 $ROOT/harness/start_run.sh를 절대경로 호출) 실점화 0.
 set -u
+export MR_VERIFY=1   # 스모크 중 알림 무음
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PASS=0; FAIL=0
 check(){ if [ "$2" -eq 0 ]; then PASS=$((PASS+1)); else FAIL=$((FAIL+1)); echo "  ✗ $1"; fi }
@@ -31,7 +32,7 @@ T="$(mktemp -d)"; trap 'rm -rf "$T"' EXIT
 
 # T9 — 정상 전진: SPEC=B 스왑 + start_run(keep=1) 성공 → cursor=2
 mkbl "$T/t9" 3600; adv "$T/t9"
-[ "$(cat "$T/t9/adapter/SPEC.md")" = "SPEC-B" ] && [ "$(cat "$T/t9/state/.backlog-cursor" 2>/dev/null)" = "2" ] \
+[ "$(cat "$T/t9/adapter/SPEC.md")" = "SPEC-B" ] && [ "$(cat "$T/t9/state/.backlog-cursor" 2>/dev/null)" = "specs/b.md" ] \
   && grep -q "keep=1" "$T/t9/state/.smoke-startrun"
 check "T9 정상 전진 (SPEC스왑·점화·cursor=2)" $?
 
@@ -41,7 +42,7 @@ mkbl "$T/t10" -10; adv "$T/t10"
 check "T10 만료가드 (전진·점화 없음)" $?
 
 # T11 — 소진가드: 마지막 항목 활성(cursor=2) → DONE 유지·점화 0·'큐 소진' 로그
-mkbl "$T/t11" 3600; echo "2" > "$T/t11/state/.backlog-cursor"; adv "$T/t11"
+mkbl "$T/t11" 3600; echo "specs/b.md" > "$T/t11/state/.backlog-cursor"; adv "$T/t11"
 [ -f "$T/t11/state/DONE" ] && [ ! -f "$T/t11/state/.smoke-startrun" ] && grep -q "큐 소진" "$T/t11/state/run.log"
 check "T11 소진가드 (DONE 보존·완주 로그)" $?
 
@@ -60,8 +61,13 @@ check "T13 claude 생존 양보 (스킵 레이스 차단)" $?
 mkbl "$T/t14" 3600; touch "$T/t14/state/.smoke-fail-ignite"; adv "$T/t14"
 [ ! -f "$T/t14/state/.backlog-cursor" ] && grep -q "점화 실패" "$T/t14/state/run.log" \
   && rm -f "$T/t14/state/.smoke-fail-ignite" && adv "$T/t14" \
-  && [ "$(cat "$T/t14/state/.backlog-cursor" 2>/dev/null)" = "2" ]   # 재시도가 같은 항목으로 성공
+  && [ "$(cat "$T/t14/state/.backlog-cursor" 2>/dev/null)" = "specs/b.md" ]   # 재시도가 같은 항목으로 성공
 check "T14 점화실패→cursor 유지→재시도 성공" $?
+
+# T15 — 낡은 토큰(이전 캠페인 잔존) = 새 캠페인 자동 인식: 항목1 활성 취급 → 2번째로 전진 (수동 rm 불필요)
+mkbl "$T/t15" 3600; echo "specs/old-campaign.md" > "$T/t15/state/.backlog-cursor"; adv "$T/t15"
+[ "$(cat "$T/t15/adapter/SPEC.md")" = "SPEC-B" ] && [ "$(cat "$T/t15/state/.backlog-cursor")" = "specs/b.md" ]
+check "T15 낡은 cursor 자동 무효화 (새 캠페인 rm 불필요)" $?
 
 TOTAL=$((PASS+FAIL))
 echo "$TOTAL backlog smoke: $PASS passed, $FAIL failed"

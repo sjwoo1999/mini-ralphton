@@ -3,7 +3,8 @@
 # 원칙: 완주 기준은 신성(각 항목 런은 진짜 DONE으로 끝남). 큐 전진은 런 "밖"에서 — 다음 항목을 SPEC으로
 #       스왑·커밋하고 start_run을 재호출한다(fresh context, Huntley 원조 패턴). 큐 소진 시 DONE이 그대로 남음 = 진짜 완주.
 # 호출자: watchdog.sh (DONE 감지 시, nohup 분리). 사람이 직접 호출해도 무해(조건 안 맞으면 그냥 종료).
-# 상태: state/.backlog-cursor = 현재 활성 항목 번호(1부터). 새 캠페인 시작 시 사람이 rm (CONTRACT §9).
+# 상태: state/.backlog-cursor = 현재 활성 항목의 "BACKLOG 원문 토큰"(spec 경로). 새 BACKLOG로 교체되면
+#       토큰이 목록에 없어 자동으로 항목1 활성 취급 — 수동 rm 불필요(10-감사 HIGH② 기계 강제). 숫자형(구버전)도 호환.
 set -uo pipefail
 ROOT="${MR_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"; ST="$ROOT/state"
 BL="$ROOT/adapter/BACKLOG.md"
@@ -29,14 +30,30 @@ if ! mkdir "$LOCK" 2>/dev/null; then
 fi
 trap 'rmdir "$LOCK" 2>/dev/null' EXIT
 
-CUR=$(cat "$ST/.backlog-cursor" 2>/dev/null || echo 1)   # 1 = 사람이 점화 전 활성화한 첫 항목
-case "$CUR" in ''|*[!0-9]*) CUR=1;; esac   # 손상 cursor 방어 (감사: 문자값이 set -u 크래시 → trap이 exit 0으로 위장하던 것)
-NEXT=$((CUR + 1))
-ITEM=$(grep -E '^- ' "$BL" | sed -n "${NEXT}p" | awk '{print $2}')
+# 위치 계산: cursor 토큰을 BACKLOG 목록에서 찾는다. 미발견(새 백로그/부재/손상) = 항목1 활성 취급 → NEXT=2.
+ITEMS=$(grep -E '^- ' "$BL" | awk '{print $2}')
+CUR_TOK=$(cat "$ST/.backlog-cursor" 2>/dev/null || echo "")
+POS=0
+if [ -n "$CUR_TOK" ]; then
+  case "$CUR_TOK" in
+    *[!0-9]*) i=0; for t in $ITEMS; do i=$((i+1)); [ "$t" = "$CUR_TOK" ] && POS=$i && break; done ;;
+    *) POS=$CUR_TOK ;;   # 구버전 숫자형 호환
+  esac
+fi
+[ "$POS" -lt 1 ] && POS=1
+NEXT=$((POS + 1))
+RAW=$(echo "$ITEMS" | sed -n "${NEXT}p")
+ITEM="$RAW"
 # 경로 관용 (드릴 #1 발견): $ROOT 기준 → 없으면 adapter/ 접두 시도 (사람이 specs/x.md로 적는 자연 표기 수용)
 [ -n "$ITEM" ] && [ ! -f "$ROOT/$ITEM" ] && [ -f "$ROOT/adapter/$ITEM" ] && ITEM="adapter/$ITEM"
 if [ -z "$ITEM" ] || [ ! -f "$ROOT/$ITEM" ]; then
-  echo "$(date '+%H:%M:%S') [backlog] 큐 소진 (${CUR}개 완주) — DONE 유지" >> "$ST/run.log"
+  echo "$(date '+%H:%M:%S') [backlog] 큐 소진 (${POS}개 완주) — DONE 유지" >> "$ST/run.log"
+  # ⑤캠페인 종료음 (감사: "진짜 끝"만 무음이던 역설) — 항목 DONE(Glass)과 구분되는 소리+메시지
+  if [ -z "${MR_VERIFY:-}" ]; then   # 테스트 중 무음 (stop_gate와 같은 관례)
+    _INST=$(basename "$ROOT")
+    osascript -e "display notification \"${_INST}: 캠페인 완주 (${POS}개 항목)\" with title \"ralphton\" sound name \"Hero\"" >/dev/null 2>&1 || true
+    afplay /System/Library/Sounds/Hero.aiff >/dev/null 2>&1 || true
+  fi
   exit 0   # 진짜 완주 — DONE 그대로
 fi
 
@@ -47,7 +64,7 @@ echo "$(date '+%H:%M:%S') [backlog] #${NEXT} ${ITEM} 점화 시도 (잔여 ${REM
 # start_run 재호출: anchor 미만료라 시계 유지, SPEC diff가 부트 프롬프트에 자동 주입(v2-2 재사용).
 # MR_KEEP_PLIST=1: 이미 로드된 자기(워치독) launchd 잡을 unload하면 이 스크립트가 도중 죽음 — plist 재로드 생략.
 if MR_KEEP_PLIST=1 bash "$ROOT/harness/start_run.sh" "$REM" >> "$ST/run.log" 2>&1; then
-  echo "$NEXT" > "$ST/.backlog-cursor"   # 점화 성공 후에만 전진 (감사 HIGH 처방) — 실패 시 cursor 유지 → 다음 틱이 같은 항목 멱등 재시도
+  echo "$RAW" > "$ST/.backlog-cursor"   # 점화 성공 후에만 전진(토큰 기록) — 실패 시 유지 → 다음 틱 멱등 재시도
 else
   echo "$(date '+%H:%M:%S') [backlog] #${NEXT} 점화 실패 — cursor 유지, 다음 틱 재시도" >> "$ST/run.log"
 fi

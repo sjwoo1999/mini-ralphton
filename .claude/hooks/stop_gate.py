@@ -41,15 +41,18 @@ def main():
     def mark(name, reason=""):
         open(os.path.join(st_dir, name), "w").write(f"{now} {reason}".strip())
         if "MR_VERIFY" not in os.environ:  # 테스트 중엔 알림 생략
-            inst = os.path.basename(root)  # 인스턴스명 — "mini-ralphton" 하드코딩이던 것 (다중 호기 구분)
+            inst = os.path.basename(root)  # 인스턴스명 — 다중 호기 구분
+            # 마커별 소리 분리 (10-감사: 성공/실패가 청각 동일하던 것) — 안 보고도 구분
+            snd = {"DONE": "Glass", "STUCK_ON_COMPLETION": "Basso",
+                   "BUDGET_EXHAUSTED": "Sosumi", "MANUAL_STOP": "Pop"}.get(name, "Glass")
             try:  # v2-2: 사람 알림 — 사이클이 끊기지 않게 (fail-open)
                 subprocess.run(["osascript", "-e",
-                    f'display notification "{inst}: {name} {reason}" with title "ralphton" sound name "Glass"'],
+                    f'display notification "{inst}: {name} {reason}" with title "ralphton" sound name "{snd}"'],
                     capture_output=True, timeout=5)
             except Exception:
                 pass
-            try:  # 들리는 채널 별도 확보 — 알림 권한이 꺼져 있어도 osascript는 rc=0이라 위만으론 전달 보장 없음
-                subprocess.run(["afplay", "/System/Library/Sounds/Glass.aiff"],
+            try:  # 들리는 채널 별도 확보 — 알림 권한 꺼져도 osascript는 rc=0이라 위만으론 전달 보장 없음
+                subprocess.run(["afplay", f"/System/Library/Sounds/{snd}.aiff"],
                     capture_output=True, timeout=5)
             except Exception:
                 pass
