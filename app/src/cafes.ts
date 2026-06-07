@@ -28,6 +28,14 @@ export function filterByWifiAndOpen24h(list: Cafe[]): Cafe[] {
   return list.filter(c => c.wifi && c.open24h)
 }
 
+/** "대형" 좌석규모 임계값 (S9: 50석 이상, 포함 경계). 필터 정책 단일 진실원. */
+export const LARGE_SEATS_MIN = 50
+
+/** 좌석 LARGE_SEATS_MIN석 이상인 "대형" 카페만. 시드 기준 c03·c06·c07. */
+export function filterByLargeSeats(list: Cafe[]): Cafe[] {
+  return list.filter(c => c.seats >= LARGE_SEATS_MIN)
+}
+
 /** 이름 부분일치 검색(대소문자 무시). 공백뿐이면 필터 해제(전체 반환). */
 export function filterByName(list: Cafe[], query: string): Cafe[] {
   const q = query.trim().toLowerCase()
