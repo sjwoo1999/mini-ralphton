@@ -73,8 +73,15 @@ nohup claude -p "$BOOT_PROMPT" \
   --permission-mode acceptEdits >> "$ST/session.log" 2>&1 &
 echo $! > "$ST/claude.pid"
 echo "▶ run 시작 (pid $(cat "$ST/claude.pid"), 예산 ${MIN}분). 관전: tail -f state/run.log (+에러는 state/session.log)"
-if [ -f "$ROOT/adapter/BACKLOG.md" ]; then  # 재고 가시화(#9 류): 13분짜리 큐를 7시간 예산에 거는 실수를 점화 순간에 보이게
+if [ -f "$ROOT/adapter/BACKLOG.md" ]; then  # 재고 가시화(#9 류). cursor는 토큰형 — 산술 전에 위치로 변환 (#21: 토큰을 $(( ))에 넣으면 set -e가 점화 후 크래시 → 전진기 거짓 '점화 실패')
   _TOT=$(grep -cE '^- ' "$ROOT/adapter/BACKLOG.md" 2>/dev/null || echo 0)
-  _CUR=$(cat "$ST/.backlog-cursor" 2>/dev/null || echo 1)
-  echo "ℹ 백로그 재고: 활성 #${_CUR}/${_TOT}, 잔여 $((_TOT - _CUR))항목 (항목당 ~7분 실측 기준 ≈$(( (_TOT - _CUR) * 7 ))분어치)"
+  _TOK=$(cat "$ST/.backlog-cursor" 2>/dev/null || echo "")
+  _POS=1
+  if [ -n "$_TOK" ]; then
+    _i=0
+    for _t in $(grep -E '^- ' "$ROOT/adapter/BACKLOG.md" | awk '{print $2}'); do
+      _i=$((_i+1)); [ "$_t" = "$_TOK" ] && _POS=$_i && break
+    done
+  fi
+  echo "ℹ 백로그 재고: 활성 #${_POS}/${_TOT}, 잔여 $((_TOT - _POS))항목 (항목당 ~7분 실측 기준 ≈$(( (_TOT - _POS) * 7 ))분어치)"
 fi

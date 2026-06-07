@@ -35,10 +35,9 @@ ITEMS=$(grep -E '^- ' "$BL" | awk '{print $2}')
 CUR_TOK=$(cat "$ST/.backlog-cursor" 2>/dev/null || echo "")
 POS=0
 if [ -n "$CUR_TOK" ]; then
-  case "$CUR_TOK" in
-    *[!0-9]*) i=0; for t in $ITEMS; do i=$((i+1)); [ "$t" = "$CUR_TOK" ] && POS=$i && break; done ;;
-    *) POS=$CUR_TOK ;;   # 구버전 숫자형 호환
-  esac
+  # 숫자형 legacy 폐기 (야간2 첫 점화 실측 #21): 캠페인 경계를 넘은 숫자 cursor("2")가 그대로 위치로
+  # 해석돼 항목 스킵을 유발 — 이제 토큰 조회 단일 경로. 목록에 없으면(숫자 포함) = 항목1 활성 취급.
+  i=0; for t in $ITEMS; do i=$((i+1)); [ "$t" = "$CUR_TOK" ] && POS=$i && break; done
 fi
 [ "$POS" -lt 1 ] && POS=1
 NEXT=$((POS + 1))

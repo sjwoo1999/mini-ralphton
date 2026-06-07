@@ -69,6 +69,11 @@ mkbl "$T/t15" 3600; echo "specs/old-campaign.md" > "$T/t15/state/.backlog-cursor
 [ "$(cat "$T/t15/adapter/SPEC.md")" = "SPEC-B" ] && [ "$(cat "$T/t15/state/.backlog-cursor")" = "specs/b.md" ]
 check "T15 낡은 cursor 자동 무효화 (새 캠페인 rm 불필요)" $?
 
+# T16 — 숫자형 묵은 cursor("2", 구버전 잔재) = 위치로 오해석 금지 → 항목1 활성 취급, 2번째로 전진
+mkbl "$T/t16" 3600; echo "2" > "$T/t16/state/.backlog-cursor"; adv "$T/t16"
+[ "$(cat "$T/t16/adapter/SPEC.md")" = "SPEC-B" ] && [ "$(cat "$T/t16/state/.backlog-cursor")" = "specs/b.md" ]
+check "T16 숫자 cursor 무효화 (legacy 스킵 차단)" $?
+
 TOTAL=$((PASS+FAIL))
 echo "$TOTAL backlog smoke: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]
