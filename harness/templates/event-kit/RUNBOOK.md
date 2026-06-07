@@ -45,6 +45,14 @@
 - 본 데모 척추 = 치트캐치 + "남의 repo에 게이트" (반복업무 절감의 직접 증거)
 - 갈매기 = 30~40초 증거물 (Live용 시각 자산). 여유 있으면 "테스트 백필 미니 드릴"을 제2 워크로드로 (우리 49→134 실적 서사와 연결)
 
+## 폴백 루프 의미론 — 실탄 검증 완료 (6/7 오후, /tmp 프로브)
+- `codex exec` 기본 샌드박스 = **read-only — 쓰기 플래그 없으면 루프가 코드를 못 깎는다!**
+  → 반드시 `--sandbox workspace-write` (또는 `-s workspace-write`)
+- `codex exec resume --last` = **헤드리스 세션 연속 확인** (2발이 1발의 파일 맥락 기억, 파일 수정 성공)
+- 폴백 루프 골격 (행사장에서 새로 친다 — 의미론만 지참):
+  while ! verify → `codex exec -s workspace-write resume --last "<verify 출력 + 계속>" </dev/null`
+- danger-full-access는 금지 (샌드박스가 우리 답안지 격리의 우군)
+
 ## /goal 정찰 확정 사실 (행사장에서 다시 안 찾아도 됨)
 - 도구 3개: create_goal{objective, token_budget} / update_goal{complete만} / get_goal
 - continuation·budget_limit 템플릿은 **바이너리 임베드** — 편집 불가. 주입은 **objective 문자열**로
