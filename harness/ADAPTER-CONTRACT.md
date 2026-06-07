@@ -88,7 +88,7 @@
 - `adapter/BACKLOG.md`: **사람이 런 전에** 작성하는 유한 큐. 형식: `- specs/<spec파일>  <메모>` 한 줄 하나, 위→아래 소비.
   점화 전 사람이 첫 항목을 `adapter/SPEC.md`로 활성화해 두고 시작 (cursor=1 암묵).
 - 전진 체인: 항목 N 런이 **진짜 DONE** → 워치독(180초 틱)이 감지 → `backlog_advance.sh`가
-  [예산 잔여 + 다음 항목 존재] 확인 → SPEC 스왑·**커밋**(런모드 탬퍼 오인 방지) → cursor++ → `MR_KEEP_PLIST=1 start_run` 재점화
+  [예산 잔여 + 다음 항목 존재] 확인 → SPEC 스왑·**커밋** → `MR_KEEP_PLIST=1 start_run` → **점화 성공 후에만 cursor++**(실패 시 다음 틱 멱등 재시도 — 항목 스킵 방지, 10-감사 처방). 직전 claude 생존 시 양보
   (anchor 미만료라 시계 유지 + SPEC diff 부트 주입 = fresh context가 바뀐 일감만 받음). 큐 소진 → DONE 유지 = 캠페인 완주.
 - 항목 중 하나가 STUCK → 체인 정지(전진은 DONE에만 발화), DIAGNOSIS 남음 — 막힌 채 큐를 건너뛰지 않는다.
 - 상태파일 3자 (§7 연장): `BACKLOG.md`·`specs/*`(생산 사람 / 소비 전진기 / 청소 사람) · `state/.backlog-cursor`(생산·소비 전진기 / **청소 사람 — 새 캠페인 시작 시 rm 필수**, start_run은 안 지움: 항목 간 생존이 설계) · `state/.advance-lock`(전진기 자체, 10분 묵으면 자가 회수).

@@ -28,6 +28,7 @@ echo "=== 자가검증 ==="
 bash "$DST/harness/check-drift.sh" "$SRCROOT"                      # 엔진 동기 (#1/#19)
 PYTHONDONTWRITEBYTECODE=1 python3 -B "$DST/.claude/hooks/test_hooks.py" | tail -1   # 훅 29종 (#16: -B)
 bash "$DST/harness/test_verify_smoke.sh" | tail -1                  # verify 골격 스모크 (#18)
+bash "$DST/harness/test_backlog_smoke.sh" | tail -1                 # 백로그 전진기 스모크 (#18 3차 봉합)
 
 cat <<EOF
 ✓ 스캐폴드 완료: $DST  (워크로드: $NAME)
