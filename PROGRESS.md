@@ -1,5 +1,14 @@
 # PROGRESS — 카공지도 v0.5
 
+## PRODUCT-STACK 라운드 로그
+- R1 DOCS-GUARD: RED missing `docs/AGENTS.md` 가드 → 보강 후 `CHECK_ONLY=DOCS-GUARD bash docs/product/check_stack.sh` GREEN.
+- R2 AS-IS: RED missing `docs/product/AS-IS.md`/출처 부족 → 보강 후 `CHECK_ONLY=AS-IS bash docs/product/check_stack.sh` GREEN.
+- R3 PRD: RED missing PRD headings/min lines/G# 측정/K1·K2 → 보강 후 `CHECK_ONLY=PRD bash docs/product/check_stack.sh` GREEN.
+- R4 ERD: RED missing ERD field set/50/확장 후보 → 보강 후 `CHECK_ONLY=ERD bash docs/product/check_stack.sh` GREEN.
+- R5 FE-SPEC: RED missing F#→G# trace/jsdom/test evidence → 보강 후 `CHECK_ONLY=FE-SPEC bash docs/product/check_stack.sh` GREEN.
+- R6 BE-SPEC: RED missing B#→G# trace/cafes.json 경계/비범위 → 보강 후 `CHECK_ONLY=BE-SPEC bash docs/product/check_stack.sh` GREEN.
+- R7 BACKLOG: RED missing spec-8~12/도출 규칙/골든 측정방법 → 보강 후 `CHECK_ONLY=BACKLOG bash docs/product/check_stack.sh` GREEN.
+
 ## 상태
 - [x] **S1** 데이터 로드·렌더 — `src/cafes.ts`(타입+시드 번들), `src/render.ts`(renderCafeList), `src/main.ts`. 시드 10곳 DOM 렌더 + 번들=골든 대조. green.
 - [x] **S2** 콘센트 필터 — `filterByOutlets(list,min)` + `OUTLET_RANK`(many3>some2>few1). many=4곳 단언 green.
