@@ -1,5 +1,6 @@
 state/
 node_modules/
+dist/
 auth.json
 *.sqlite
 .codex/
