@@ -53,6 +53,11 @@
   while ! verify → `codex exec -s workspace-write resume --last "<verify 출력 + 계속>" </dev/null`
 - danger-full-access는 금지 (샌드박스가 우리 답안지 격리의 우군)
 
+## 폴더별 AGENTS.md (강의: "폴더별로 하나씩" — Codex는 디렉토리 스코프로 읽는다)
+행사장 repo에 `agents-tree/`의 3장을 각 폴더에 배치: `harness/AGENTS.md`(답안지 — Do not edit),
+`adapter/AGENTS.md`(SPEC 불가침), `app/AGENTS.md`(작업장 규칙). 루트 AGENTS.md(헌법)와 4겹 스코프 —
+에이전트가 위험 폴더에 *들어서는 순간* Do-not이 컨텍스트에 박힌다. 격리의 prose 층 보강 (lazycodex /init-deep과 같은 패턴).
+
 ## /goal 정찰 확정 사실 (행사장에서 다시 안 찾아도 됨)
 - 도구 3개: create_goal{objective, token_budget} / update_goal{complete만} / get_goal
 - continuation·budget_limit 템플릿은 **바이너리 임베드** — 편집 불가. 주입은 **objective 문자열**로
