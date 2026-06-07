@@ -1,1 +1,1 @@
-{ "reproducibility": true, "min_test_count": 4, "min_assertion_count": 8, "min_coverage_lines_pct": 0 }
+{"reproducibility": true, "min_test_count": 14, "min_assertion_count": 33, "min_coverage_lines_pct": 0}
