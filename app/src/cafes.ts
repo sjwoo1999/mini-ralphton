@@ -36,6 +36,11 @@ export function filterByLargeSeats(list: Cafe[]): Cafe[] {
   return list.filter(c => c.seats >= LARGE_SEATS_MIN)
 }
 
+/** 심야 카공 프리셋: 24시간 ∩ 대형좌석 ∩ 콘센트 많음. */
+export function filterNightStudyPreset(list: Cafe[]): Cafe[] {
+  return list.filter(c => c.open24h && c.seats >= LARGE_SEATS_MIN && c.outlets === 'many')
+}
+
 /** 이름 부분일치 검색(대소문자 무시). 공백뿐이면 필터 해제(전체 반환). */
 export function filterByName(list: Cafe[], query: string): Cafe[] {
   const q = query.trim().toLowerCase()
@@ -46,6 +51,21 @@ export function filterByName(list: Cafe[], query: string): Cafe[] {
 /** 공부적합도 점수 = 콘센트등급(many3/some2/few1) + wifi(1) + open24h(1). 순수함수. */
 export function score(cafe: Cafe): number {
   return OUTLET_RANK[cafe.outlets] + (cafe.wifi ? 1 : 0) + (cafe.open24h ? 1 : 0)
+}
+
+export interface ScoreBreakdown {
+  outlets: number
+  wifi: number
+  open24h: number
+  sum: number
+}
+
+/** 점수 설명용 구성요소. 합계는 score(cafe)와 같아야 한다. */
+export function scoreBreakdown(cafe: Cafe): ScoreBreakdown {
+  const outlets = OUTLET_RANK[cafe.outlets]
+  const wifi = cafe.wifi ? 1 : 0
+  const open24h = cafe.open24h ? 1 : 0
+  return { outlets, wifi, open24h, sum: outlets + wifi + open24h }
 }
 
 /** 점수 내림차순 정렬, 동점은 id 오름차순. 입력 불변(새 배열 반환). */
