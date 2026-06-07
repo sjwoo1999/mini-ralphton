@@ -8,6 +8,14 @@
 - 살아있는 S-ID: SPEC.md의 `- [S<n>]` 줄이 전부다. 그 외는 산문.
 - <행사 금지목록: RAG·Streamlit·Image Analyzer·교육챗봇·채용스크리너·영양코치·성격분석 — 절대 금지>
 
+## NEVER (DO보다 DON'T가 강하다 — 강의 원칙. 한 줄 = 한 사고)
+- NEVER 답안지(protected.txt 목록·골든·SPEC) 수정 — verify가 파괴 복원한다
+- NEVER 완료 선언 — 종료 권한은 verify GREEN에만 있다
+- NEVER `danger-full-access` / `--dangerously-*` — 샌드박스는 격리의 우군
+- NEVER 비싼 검증(브라우저·스크린샷·computer-use)을 기본 경로로 — **사람이 `$chrome`류로 명시 호출할 때만** (검증 비용 사다리)
+- NEVER 이 환경에 없는 도구 가정 — 막히면 `command -v`로 확인 먼저 (예: macOS엔 timeout 없음, jsdom에 Leaflet 없음)
+- NEVER 골든값을 검산 없이 박기 — 틀린 골든 = 영구 STUCK
+
 ## 4 실패모드 → 벽 (polysona 증류 — 전문: docs/references/polysona-case-study.md)
 | 실패 | 벽 |
 |---|---|
