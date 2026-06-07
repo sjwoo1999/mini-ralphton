@@ -1,0 +1,225 @@
+:root {
+  color: #1f2a24;
+  background: #f5f1ea;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(245, 241, 234, 0.92), rgba(239, 246, 241, 0.96)),
+    #f5f1ea;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+#app {
+  width: min(100%, 520px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 28px 18px 36px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  color: #14352a;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+[data-filter-summary] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  margin: 0 0 18px;
+  padding: 7px 12px;
+  border: 1px solid #cfe0d5;
+  border-radius: 999px;
+  background: #eef8f1;
+  color: #245541;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+[aria-label="카공지도 필터"] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+[aria-label="카공지도 필터"] select,
+[aria-label="카공지도 필터"] input,
+[aria-label="카공지도 필터"] button {
+  min-height: 42px;
+  border: 1px solid #d7d1c6;
+  border-radius: 12px;
+  background: #fffdf9;
+  color: #26332c;
+  font-size: 14px;
+}
+
+[aria-label="카공지도 필터"] select,
+[aria-label="카공지도 필터"] input {
+  width: 100%;
+  padding: 0 12px;
+}
+
+[aria-label="카공지도 필터"] input {
+  grid-column: span 2;
+}
+
+[aria-label="카공지도 필터"] button {
+  padding: 0 10px;
+  font-weight: 700;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+[aria-label="카공지도 필터"] button:hover {
+  transform: translateY(-1px);
+  border-color: #9db8a8;
+}
+
+[aria-label="카공지도 필터"] button[aria-pressed="true"] {
+  border-color: #2f6b4f;
+  background: #245541;
+  color: #fffdf9;
+}
+
+.cafe-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cafe-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 12px;
+  padding: 16px;
+  border: 1px solid rgba(42, 69, 54, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 253, 249, 0.94);
+  box-shadow: 0 12px 30px rgba(42, 49, 43, 0.08);
+}
+
+.cafe-name {
+  align-self: center;
+  color: #14241c;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.cafe-seats {
+  align-self: center;
+  justify-self: end;
+  color: #6a776f;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cafe-score {
+  display: inline-flex;
+  grid-column: 1 / -1;
+  width: fit-content;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #1f6f4b;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.cafe-item:has([data-score-sum="5"]) .cafe-score {
+  background: #176b4a;
+}
+
+.cafe-item:has([data-score-sum="3"]) .cafe-score,
+.cafe-item:has([data-score-sum="4"]) .cafe-score {
+  background: #5d775f;
+}
+
+.cafe-item:has([data-score-sum="1"]) .cafe-score,
+.cafe-item:has([data-score-sum="2"]) .cafe-score {
+  background: #8a8175;
+}
+
+.cafe-breakdown,
+.cafe-badges {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cafe-breakdown [data-score-part],
+.cafe-badges {
+  color: #506158;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.cafe-breakdown [data-score-part] {
+  display: inline-flex;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #edf2ec;
+  font-weight: 700;
+}
+
+.cafe-badges {
+  padding-top: 2px;
+}
+
+.cafe-fav {
+  grid-column: 2;
+  grid-row: 1;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #d9ceb9;
+  border-radius: 999px;
+  background: #fff7df;
+  color: #9a6b00;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.cafe-fav[aria-pressed="true"] {
+  border-color: #d19a16;
+  background: #f5c94b;
+  color: #4d3500;
+}
+
+@media (min-width: 520px) {
+  #app {
+    padding-top: 42px;
+  }
+
+  [aria-label="카공지도 필터"] {
+    grid-template-columns: 1.1fr 1.3fr repeat(4, auto);
+  }
+
+  [aria-label="카공지도 필터"] input {
+    grid-column: auto;
+  }
+}

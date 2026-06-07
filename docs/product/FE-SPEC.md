@@ -50,3 +50,5 @@ jsdom은 DOM 노드, 텍스트, 이벤트, localStorage를 검증할 수 있다.
 Leaflet 지도 품질, 모바일 반응형 여백, 60fps 체감, 색 대비는 사람 눈 검수 칸에 둔다.
 이 칸은 F#를 부여하지 않는다.
 자동 체커가 볼 수 없는 것을 자동 green으로 주장하지 않는다.
+디자인 CSS는 `app/src/style.css`로 적용한다.
+사람 검수용 스크린샷은 `docs/product/screenshots/kagong-initial.png`, `docs/product/screenshots/kagong-night.png`에 둔다.

@@ -16,6 +16,7 @@
 - R12 spec-11: 심야 카공 프리셋 구현. 골든: open24h ∩ seats>=50 ∩ many = [c03,c06].
 - R13 spec-12: 즐겨찾기 뷰 구현. 골든: c01·c05 토글 후 뷰=[c01,c05], c01 해제 후 [c05].
 - R14 doc-sync: FE-SPEC/BACKLOG 구현 상태 갱신, check_stack BACKLOG 자기비교 제거.
+- R15 design: `app/src/style.css` 추가 + `main.ts` import. build CSS bundle 생성, vitest 41/41 green, 스크린샷 2장 산출.
 
 ## 상태
 - [x] **S1** 데이터 로드·렌더 — `src/cafes.ts`(타입+시드 번들), `src/render.ts`(renderCafeList), `src/main.ts`. 시드 10곳 DOM 렌더 + 번들=골든 대조. green.
