@@ -32,6 +32,16 @@ export function getVisibleCafes(list: Cafe[], state: CafeUiState): Cafe[] {
   return state.sort === 'distance' ? sortByDistance(result, HONGDAE_STATION) : sortByScore(result)
 }
 
+export function summarizeFilters(state: CafeUiState, count: number): string {
+  const parts: string[] = []
+  if (state.outlets === 'many') parts.push('콘센트 많음')
+  else if (state.outlets === 'some') parts.push('콘센트 보통 이상')
+  else if (state.outlets === 'few') parts.push('콘센트 전체 등급')
+  if (state.query.trim()) parts.push(`검색 ${state.query.trim()}`)
+  if (parts.length === 0) return `전체 ${count}곳`
+  return `${parts.join(' · ')} · ${count}곳`
+}
+
 export function mountKagongApp(root: HTMLElement): void {
   const state: CafeUiState = { ...DEFAULT_UI_STATE }
   root.replaceChildren()
@@ -41,6 +51,9 @@ export function mountKagongApp(root: HTMLElement): void {
 
   const controls = document.createElement('section')
   controls.setAttribute('aria-label', '카공지도 필터')
+
+  const summary = document.createElement('p')
+  summary.setAttribute('data-filter-summary', '')
 
   const outletSelect = document.createElement('select')
   outletSelect.setAttribute('data-filter-outlets', '')
@@ -77,7 +90,9 @@ export function mountKagongApp(root: HTMLElement): void {
   listRoot.setAttribute('data-list-root', '')
 
   const render = () => {
-    renderCafeList(listRoot, getVisibleCafes(cafes, state))
+    const visible = getVisibleCafes(cafes, state)
+    summary.textContent = summarizeFilters(state, visible.length)
+    renderCafeList(listRoot, visible)
   }
 
   outletSelect.addEventListener('change', () => {
@@ -97,6 +112,6 @@ export function mountKagongApp(root: HTMLElement): void {
     render()
   })
 
-  root.append(heading, controls, listRoot)
+  root.append(heading, summary, controls, listRoot)
   render()
 }
