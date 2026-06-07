@@ -44,3 +44,34 @@ export function score(cafe: Cafe): number {
 export function sortByScore(list: Cafe[]): Cafe[] {
   return [...list].sort((a, b) => score(b) - score(a) || a.id.localeCompare(b.id))
 }
+
+/** 위경도 좌표 (카페·기준점 공용 최소 형태). */
+export interface LatLng {
+  lat: number
+  lng: number
+}
+
+/** 기준점 = 홍대입구역 (SPEC v0.3 [S7] 고정). */
+export const HONGDAE_STATION: LatLng = { lat: 37.5572, lng: 126.9245 }
+
+/**
+ * 두 좌표 사이 대권거리(km). 평면근사 아님 — 위경도를 라디안화해 구면 코사인 공식의
+ * 수치 안정 변형(haversine)으로 계산. 같은 점은 0, 대칭. 순수함수.
+ */
+export function haversine(a: LatLng, b: LatLng): number {
+  const R = 6371.0088 // 지구 평균반경(km). 정렬은 비율 불변이라 값만 영향.
+  const toRad = (d: number) => (d * Math.PI) / 180
+  const dLat = toRad(b.lat - a.lat)
+  const dLng = toRad(b.lng - a.lng)
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2
+  return 2 * R * Math.asin(Math.sqrt(h))
+}
+
+/** 기준점에서 가까운 순(오름차순) 정렬, 동점은 id 오름차순. 입력 불변(새 배열 반환). */
+export function sortByDistance(list: Cafe[], origin: LatLng): Cafe[] {
+  return [...list].sort(
+    (a, b) => haversine(origin, a) - haversine(origin, b) || a.id.localeCompare(b.id),
+  )
+}
