@@ -22,20 +22,23 @@ jsdom으로 검증 가능한 것만 F#에 배정한다.
 | 추적 | 항목 | jsdom 단언 | 상태 |
 |---|---|---|---|
 | F1 ← G1 | 카페 리스트 렌더 | `<li data-cafe-id>`가 시드 전체를 렌더하고 각 name, seats 텍스트가 존재 | 구현됨 spec-1 S1 |
-| F2 ← G2 | 필터바 UI 배선 | 콘센트, 와이파이, 24시간, 좌석 입력 이벤트가 리스트 부분집합을 갱신 | 미구현, 코어 함수만 존재 |
-| F3 ← G3 | 검색 입력 배선 | 검색어 입력 이벤트가 이름 부분검색 결과를 리스트에 반영 | 미구현, 코어 함수만 존재 |
-| F4 ← G1 | 정렬 토글 | 점수순과 거리순 토글이 첫 항목 id를 결정적으로 바꿈 | 미구현, 코어 함수만 존재 |
-| F5 ← G5 | 활성 필터 요약 | 현재 적용 조건과 결과 수가 헤더 텍스트로 표시 | 미구현 |
+| F2 ← G2 | 필터바 UI 배선 | 콘센트, 와이파이, 24시간, 좌석 입력 이벤트가 리스트 부분집합을 갱신 | 구현됨 spec-9 |
+| F3 ← G3 | 검색 입력 배선 | 검색어 입력 이벤트가 이름 부분검색 결과를 리스트에 반영 | 구현됨 spec-9 |
+| F4 ← G1 | 정렬 토글 | 점수순과 거리순 토글이 첫 항목 id를 결정적으로 바꿈 | 구현됨 spec-9 |
+| F5 ← G5 | 활성 필터 요약 | 현재 적용 조건과 결과 수가 헤더 텍스트로 표시 | 구현됨 spec-10 |
 | F6 ← G1 | 점수 배지 | `.cafe-score`에 `공부적합 N점` 형식이 표시 | 구현됨 spec-6 S6 |
 | F7 ← G4 | 즐겨찾기 토글 버튼 | `.cafe-fav` 클릭이 `aria-pressed`와 localStorage를 갱신 | 구현됨 spec-8 S8 |
-| F8 ← G5 | 점수 분해 표시 | 카드에 콘센트, 와이파이, 24시간, 좌석 판단 노드가 분리 표시 | 미구현, spec-8 후보 |
+| F8 ← G5 | 점수 분해 표시 | 카드에 콘센트, 와이파이, 24시간, 좌석 판단 노드가 분리 표시 | 구현됨 spec-8 |
 
 ## 3.3 구현됨 표기 근거
 F1은 `app/tests/s1.render.spec.ts`가 `data-cafe-id` 렌더와 텍스트 존재를 검증한다.
+F2, F3, F4는 `app/tests/spec9.wiring.spec.ts`가 select, input, sort button 이벤트와 골든 id 집합을 검증한다.
+F5는 `app/tests/spec10.summary.spec.ts`가 `data-filter-summary` 텍스트와 결과 수를 검증한다.
 F6은 `app/tests/s6.badge.spec.ts`가 `.cafe-score`와 공부적합 문구를 검증한다.
 F7은 `app/tests/s8.favorites.spec.ts`가 `.cafe-fav`, `aria-pressed`, localStorage 반영을 검증한다.
-F2, F3, F4는 코어 함수 테스트가 있지만 입력 이벤트 배선 테스트가 없으므로 미구현으로 둔다.
-F5와 F8은 G5의 핵심이며 다음 백로그에서 별도 spec으로 쪼갠다.
+F8은 `app/tests/spec8.breakdown.spec.ts`가 `data-score-part`와 `data-score-sum`을 검증한다.
+spec-11은 `app/tests/spec11.night.spec.ts`가 심야 프리셋 버튼과 완전 특성화를 검증한다.
+spec-12는 `app/tests/spec12.favview.spec.ts`가 즐겨찾기 뷰와 localStorage 집합 일치를 검증한다.
 
 ## 3.4 jsdom 검증 경계
 jsdom은 DOM 노드, 텍스트, 이벤트, localStorage를 검증할 수 있다.

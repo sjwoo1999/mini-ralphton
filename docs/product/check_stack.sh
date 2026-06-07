@@ -129,11 +129,25 @@ for (const id of selected) {
     for (const g of ['G1', 'G2', 'G3', 'G4', 'G5']) {
       if (![...seen.values()].includes(g)) fail(id, `unused goal ${g}`)
     }
-    const testText = fs.readdirSync(testDir).filter(f => f.endsWith('.ts')).map(f => fs.readFileSync(path.join(testDir, f), 'utf8')).join('\n')
+    const tests = Object.fromEntries(fs.readdirSync(testDir).filter(f => f.endsWith('.ts')).map(f => [f, fs.readFileSync(path.join(testDir, f), 'utf8')]))
+    const testText = Object.values(tests).join('\n')
     const requiredEvidence = ['data-cafe-id', '공부적합', 'cafe-fav', 'localStorage']
     for (const token of requiredEvidence) {
       if (!testText.includes(token)) fail(id, `missing test evidence ${token}`)
     }
+    const implementedSpecs = [
+      ['F2', 'spec9.wiring.spec.ts', 'data-filter-outlets'],
+      ['F3', 'spec9.wiring.spec.ts', 'data-search'],
+      ['F4', 'spec9.wiring.spec.ts', 'data-sort-score'],
+      ['F5', 'spec10.summary.spec.ts', 'data-filter-summary'],
+      ['F8', 'spec8.breakdown.spec.ts', 'data-score-part'],
+    ]
+    for (const [feature, file, token] of implementedSpecs) {
+      if (!text.includes(`${feature} ←`) || !text.includes('구현됨')) fail(id, `missing implemented marker ${feature}`)
+      if (!tests[file] || !tests[file].includes(token)) fail(id, `missing implemented test ${file}:${token}`)
+    }
+    if (!tests['spec11.night.spec.ts'] || !tests['spec11.night.spec.ts'].includes('data-night-preset')) fail(id, 'missing spec11 test evidence')
+    if (!tests['spec12.favview.spec.ts'] || !tests['spec12.favview.spec.ts'].includes('data-favorites-only')) fail(id, 'missing spec12 test evidence')
     if (!text.includes('사람 눈 검수')) fail(id, 'missing human eye section')
   }
 
@@ -150,14 +164,17 @@ for (const id of selected) {
   if (id === 'BACKLOG') {
     const text = requireFile(id, 40)
     requireTokens(id, text, ['spec-8', 'spec-9', 'spec-10', 'spec-11', 'spec-12', '골든', '도출 규칙'])
-    const many = seed.filter(c => c.outlets === 'many')
-    const night = seed.filter(c => c.open24h)
-    const large = seed.filter(c => c.seats >= 50)
-    const preset = seed.filter(c => c.open24h && c.seats >= 50 && c.outlets === 'many').map(c => c.id).sort()
-    if (many.length !== seed.filter(c => c.outlets === 'many').map(c => c.id).length) fail(id, 'many measurement unstable')
-    if (night.length !== seed.filter(c => c.open24h === true).length) fail(id, 'open24h measurement unstable')
-    if (large.length !== seed.filter(c => Number(c.seats) >= 50).length) fail(id, 'large measurement unstable')
-    if (preset.join(',') !== seed.filter(c => c.open24h && c.seats >= 50 && c.outlets === 'many').map(c => c.id).sort().join(',')) fail(id, 'preset measurement unstable')
+    const expectJson = (label, actual, expected) => {
+      if (JSON.stringify(actual) !== JSON.stringify(expected)) fail(id, `${label} golden mismatch ${JSON.stringify(actual)}`)
+    }
+    expectJson('many', seed.filter(c => c.outlets === 'many').map(c => c.id), ['c01', 'c03', 'c06', 'c07'])
+    expectJson('name_cafe', seed.filter(c => c.name.includes('카페')).map(c => c.id), ['c01', 'c03', 'c06'])
+    expectJson('open24h', seed.filter(c => c.open24h).map(c => c.id), ['c03', 'c06', 'c09'])
+    expectJson('large', seed.filter(c => c.seats >= 50).map(c => c.id), ['c03', 'c06', 'c07'])
+    expectJson('preset', seed.filter(c => c.open24h && c.seats >= 50 && c.outlets === 'many').map(c => c.id), ['c03', 'c06'])
+    for (const specFile of ['spec8.breakdown.spec.ts', 'spec9.wiring.spec.ts', 'spec10.summary.spec.ts', 'spec11.night.spec.ts', 'spec12.favview.spec.ts']) {
+      if (!fs.existsSync(path.join(testDir, specFile))) fail(id, `missing spec test ${specFile}`)
+    }
     requireTokens(id, text, ['outlets === many', 'open24h', 'seats >= 50', 'open24h ∩ seats >= 50 ∩ outlets === many'])
   }
 
