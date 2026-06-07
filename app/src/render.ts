@@ -1,4 +1,4 @@
-import type { Cafe } from './cafes'
+import { score, type Cafe } from './cafes'
 
 const OUTLET_LABEL: Record<Cafe['outlets'], string> = {
   many: '콘센트 많음',
@@ -23,6 +23,7 @@ export function renderCafeList(container: HTMLElement, list: Cafe[]): void {
     li.innerHTML =
       `<span class="cafe-name">${cafe.name}</span>` +
       `<span class="cafe-seats">${cafe.seats}석</span>` +
+      `<span class="cafe-score">공부적합 ${score(cafe)}점</span>` +
       `<span class="cafe-badges">${badges}</span>`
     ul.appendChild(li)
   }
