@@ -9,6 +9,9 @@
 - R6 BE-SPEC: RED missing B#→G# trace/cafes.json 경계/비범위 → 보강 후 `CHECK_ONLY=BE-SPEC bash docs/product/check_stack.sh` GREEN.
 - R7 BACKLOG: RED missing spec-8~12/도출 규칙/골든 측정방법 → 보강 후 `CHECK_ONLY=BACKLOG bash docs/product/check_stack.sh` GREEN.
 
+## IMPLEMENTATION 라운드 로그
+- R9 spec-9: 입력 배선 구현 시작. 골든: many=[c01,c03,c06,c07], 검색 "카페"=[c01,c03,c06], 점수순 첫 항목 c03.
+
 ## 상태
 - [x] **S1** 데이터 로드·렌더 — `src/cafes.ts`(타입+시드 번들), `src/render.ts`(renderCafeList), `src/main.ts`. 시드 10곳 DOM 렌더 + 번들=골든 대조. green.
 - [x] **S2** 콘센트 필터 — `filterByOutlets(list,min)` + `OUTLET_RANK`(many3>some2>few1). many=4곳 단언 green.
