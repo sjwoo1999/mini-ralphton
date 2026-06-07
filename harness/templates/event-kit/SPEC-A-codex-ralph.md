@@ -10,7 +10,12 @@
 
 ## 기계 체크리스트 (T1 — 코어, 행사 전반부)
 - [S1] 엔진 골격 이식: `verify.sh`(4게이트 사다리)·`backlog_advance.sh`·루프 러너·`start_run.sh`가 새 repo에 — `bash -n` 전부 통과
-- [S2] 루프층 = **Codex 내장 `/goal`** (0.128+ 네이티브 랄프 루프 — 워치독 재발명 금지): `goals/continuation.md`에 "매 반복 `bash harness/verify.sh` 실행, VERIFY GREEN 전엔 미완"을 박아 **모델 자기심사를 기계 판정으로 교체**. `goals/budget_limit.md`엔 HANDOFF 의무. (헤드리스 보조용 `codex exec`는 프로브 실증: git repo 필수·stdin 닫기)
+- [S2] 루프층 = Codex `/goal` **objective 주입** (정찰 확정 6/7: continuation.md는 바이너리 임베드 — 편집 불가!):
+  `/goal` objective에 "완료 조건 = `bash harness/verify.sh`가 VERIFY GREEN + 큐 소진. 그 전에 update_goal(complete) 금지"를 박는다
+  (define-goal SKILL 공식 패턴: verification evidence를 objective에). AGENTS.md가 이중 앵커.
+- [S2b] **셸 폴백 루프 (보험 1순위 — /goal 의미론이 어긋날 때)**: `codex_loop.sh` ~20줄 —
+  `while ! bash harness/verify.sh; do codex exec resume --last "verify 출력 보고 미완 항목 계속" </dev/null; done`
+  T+10분 /goal 실기동이 실패하면 즉시 이 경로로 강등 (데모 서사는 동일: "기계가 채점관")
 - [S3] verify 스모크 8종 green (T1~T8 — GREEN·완성성·재현성·탬퍼·opt-out·테스트게이트·빈보호집합·dev비파괴)
 - [S4] backlog 스모크 8종 green (T9~T16 — 전진·만료·소진·락·생존양보·실패재시도·낡은cursor·숫자cursor)
 - [S5] 라이브 미니드릴: 토이 워크로드(골든쌍 1개) 2항목 캠페인이 codex로 점화→자동 전진→큐 소진 DONE — run.log로 증명
@@ -21,6 +26,7 @@
 - [S8] 하이브리드 라우팅: 코드베이스 탐색·웹 리서치류 서브태스크를 저가/로컬 모델로 위임하는 어댑터 훅 (OmO oh-my-openagent 패턴)
 
 ## 가정 — 사람이 닫는다 (S-ID 금지)
-- [A1] ~~워치독 폴링~~ → **`/goal`이 루프·예산·resume 전담** (웹 실증 6/7: 5상태·토큰예산·세션 재개). 우리 층은 판정·격리·백로그만 — "루프 재발명 금지". 행사장 첫 10분에 `/goal` 실기동 1회로 가정 확정 ‹CONFIRM›
+- [A1] `/goal` 의미론 — 정찰로 절반 확정(5상태·예산·objective 주입·모델은 complete만 가능), **미지 = 헤드리스 여부**(TUI 전용 유력).
+  **T+10분 실기동은 협상 불가** — 성공 시 /goal 경로, 실패 시 S2b 폴백. 어느 쪽이든 출품 성립 ‹CONFIRM›
 - [A2] 데모 워크로드 = SPEC-B 갈매기 러너 ‹CONFIRM›
 - [A3] 트랙 1 잠금, 부산 양념은 워크로드 쪽에서 ‹CONFIRM›
