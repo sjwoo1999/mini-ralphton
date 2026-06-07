@@ -1,4 +1,4 @@
-<!-- AGENTS.md — Codex가 읽는 운영 헌법. CLAUDE.md와 동일 내용 유지(듀얼 런타임). 수정 시 둘 다. -->
+<!-- AGENTS.md — Codex가 읽는 운영 헌법. CLAUDE.md와 동일 내용 유지. -->
 # <프로젝트명> — 운영 헌법 (Ralphthon Busan · Track <N>)
 
 ## 미션 (북극성 — 표류 의심되면 이 절부터 다시 읽기)
