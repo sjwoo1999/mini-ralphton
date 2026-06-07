@@ -1,10 +1,12 @@
-# PROGRESS — 카공지도 v0.1
+# PROGRESS — 카공지도 v0.2
 
 ## 상태
 - [x] **S1** 데이터 로드·렌더 — `src/cafes.ts`(타입+시드 번들), `src/render.ts`(renderCafeList), `src/main.ts`. 시드 10곳 DOM 렌더 + 번들=골든 대조. green.
 - [x] **S2** 콘센트 필터 — `filterByOutlets(list,min)` + `OUTLET_RANK`(many3>some2>few1). many=4곳 단언 green.
 - [x] **S3** 복합 필터 — `filterByWifiAndOpen24h(list)`. c03,c06,c09=3 단언 green.
 - [x] **S4** 공부적합도 점수 — `score(cafe)` 순수함수 + `sortByScore` 내림차순(동점 id 오름차순). 1위 c03 단언 green. `main.ts`가 점수순 기본 렌더.
+- [ ] **S5** 이름 검색 — SPEC v0.2 신규. "카페" 부분일치(대소문자무시) → c01·c03·c06=3곳. (이번 라운드 진행)
+- [ ] **S6** 점수 배지 — SPEC v0.2 신규. 목록 항목에 "공부적합 N점" 표시, c03="5점". (대기)
 
 ## 핸드오프 메모
 - 데이터는 `src/data/cafes.json`(시드 사본, 내용 동일). `src/cafes.ts`의 `cafes`로 노출.
