@@ -58,6 +58,13 @@
 `adapter/AGENTS.md`(SPEC 불가침), `app/AGENTS.md`(작업장 규칙). 루트 AGENTS.md(헌법)와 4겹 스코프 —
 에이전트가 위험 폴더에 *들어서는 순간* Do-not이 컨텍스트에 박힌다. 격리의 prose 층 보강 (lazycodex /init-deep과 같은 패턴).
 
+## Codex 네이티브 훅 — 이종 정찰 확정 (Codex 0.137.0, hooks stable=true)
+- SessionStart(startup/resume/clear matcher)·PermissionRequest(allow/deny)·PreCompact/PostCompact(continue:false 가능)·PreToolUse(Bash·apply_patch 일부) **전부 네이티브 존재**. ConfigChange는 없음(셸 보호집합으로 대체).
+- **T+10 체크리스트 추가**: `.codex/hooks.json`(또는 config hooks 표면)에 Stop류 훅으로 verify를 걸 수 있는지 1회 실기동 — 되면 S2 정공법(Claude판 stop_gate 동형), 안 되면 objective 주입+셸 폴백 순.
+- 야간 자율 승인 = Codex PermissionRequest 훅 + execpolicy (NIGHT-MANDATE의 Codex판 기계화 경로).
+- async wake 미지원 — 워치독/전진기는 셸 유지 (번역표 MED 확신).
+- T3 요지: Codex는 /goal(목표 상태)+훅+승인이 한 설계면 — Claude판보다 통합적. 단 영속 깨우기는 셸이 우위.
+
 ## /goal 정찰 확정 사실 (행사장에서 다시 안 찾아도 됨)
 - 도구 3개: create_goal{objective, token_budget} / update_goal{complete만} / get_goal
 - continuation·budget_limit 템플릿은 **바이너리 임베드** — 편집 불가. 주입은 **objective 문자열**로
