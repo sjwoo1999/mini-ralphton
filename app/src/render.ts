@@ -1,4 +1,5 @@
 import { score, type Cafe } from './cafes'
+import { isFavorite } from './favorites'
 
 const OUTLET_LABEL: Record<Cafe['outlets'], string> = {
   many: '콘센트 많음',
@@ -20,11 +21,14 @@ export function renderCafeList(container: HTMLElement, list: Cafe[]): void {
       cafe.wifi ? '와이파이' : null,
       cafe.open24h ? '24시간' : null,
     ].filter(Boolean).join(' · ')
+    const fav = isFavorite(cafe.id)
     li.innerHTML =
       `<span class="cafe-name">${cafe.name}</span>` +
       `<span class="cafe-seats">${cafe.seats}석</span>` +
       `<span class="cafe-score">공부적합 ${score(cafe)}점</span>` +
-      `<span class="cafe-badges">${badges}</span>`
+      `<span class="cafe-badges">${badges}</span>` +
+      `<button class="cafe-fav" type="button" data-fav-id="${cafe.id}"` +
+      ` aria-pressed="${fav}" aria-label="즐겨찾기">${fav ? '★' : '☆'}</button>`
     ul.appendChild(li)
   }
   container.appendChild(ul)

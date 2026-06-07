@@ -1,4 +1,4 @@
-# PROGRESS — 카공지도 v0.3
+# PROGRESS — 카공지도 v0.4
 
 ## 상태
 - [x] **S1** 데이터 로드·렌더 — `src/cafes.ts`(타입+시드 번들), `src/render.ts`(renderCafeList), `src/main.ts`. 시드 10곳 DOM 렌더 + 번들=골든 대조. green.
@@ -8,11 +8,13 @@
 - [x] **S5** 이름 검색 — `filterByName(list,query)` trim→toLowerCase→includes. 공백/빈문자열은 전체 반환. "카페"=c01·c03·c06=3 단언 green.
 - [x] **S6** 점수 배지 — `render.ts`가 `score(cafe)`로 `<span class="cafe-score">공부적합 N점</span>` 출력. c03="공부적합 5점" 단언 green.
 - [x] **S7** 거리순 정렬 — `haversine(a,b)` km 순수함수 + `sortByDistance(list, origin)`(오름차순, 동점 id). 기준점 `HONGDAE_STATION=(37.5572,126.9245)`. 1위 c04(0.467km)·2위 c05·3위 c01, c04 0.4~0.6km 단언 green.
+- [x] **S8** 즐겨찾기 — `src/favorites.ts`: `toggleFavorite(id)`/`getFavorites()`/`isFavorite(id)` + `FAVORITES_KEY='kagong:favorites'`. localStorage 단일 진실원(인메모리 캐시 없음 → 새 인스턴스 자동 복원). render에 `.cafe-fav` ★/☆ 버튼(`aria-pressed`) 자동 부착. 토글/재토글/복원/미저장[]/깨진값 폴백 단언 green.
 
 ## 핸드오프 메모
 - 데이터는 `src/data/cafes.json`(시드 사본, 내용 동일). `src/cafes.ts`의 `cafes`로 노출. 점수 단일 진실원 = `score()`, 거리 단일 진실원 = `haversine()`(sortByDistance가 재계산 안 하고 compose).
-- 렌더는 `<li data-cafe-id>` 단위 — 정렬/필터 슬라이스는 결과 배열을 `renderCafeList`에 넘기면 됨. 배지(S6)는 모든 항목에 자동 부착.
-- 다음 1수: SPEC v0.3(S1-S7) 전부 단언 green. 후속은 BACKLOG(지도 항목2, 검색·정렬 UI 배선) — main.ts는 아직 검색 input·정렬 토글 미배선(코어 로직만). 거리순 UI 배선 시 `sortByDistance(cafes, HONGDAE_STATION)` 호출.
+- 렌더는 `<li data-cafe-id>` 단위 — 정렬/필터 슬라이스는 결과 배열을 `renderCafeList`에 넘기면 됨. 배지(S6)·★토글(S8)은 모든 항목에 자동 부착. render가 `isFavorite()`를 항목마다 호출(localStorage 라이브 read).
+- 즐겨찾기 영속 = localStorage가 곧 상태. 함수는 매 호출 라이브 read/write-through → 재로드·다중 인스턴스 desync 없음. 깨진 JSON/비배열은 `[]` 폴백.
+- 다음 1수: SPEC v0.4(S1-S8) 전부 단언 green. 후속은 BACKLOG(지도 항목2, 검색·정렬·★토글 클릭 UI 배선) — main.ts는 아직 입력/토글 이벤트 미배선(코어 로직만). ★ 클릭 배선 시 `data-fav-id` 위임 핸들러 → `toggleFavorite(id)` 후 재렌더.
 
 ### 막힘후보
-- 가장 불확실: 없음 — S1-S7 전부 단언 green. S7 동점 타이브레이크는 시드에 동일좌표가 없어 합성카페(z01/z02)로 강제 검증함. 직전 실패: 없음.
+- 가장 불확실: S8 "새 인스턴스 복원" 해석 — 자유함수가 localStorage를 라이브 read하게 설계(클래스 인스턴스 대신), 직접 시드 후 갓 읽기로 복원 증명(비순환). 택한 해석: localStorage=단일 진실원. 직전 실패: 없음(첫 red는 모듈 미존재 import 에러, 구현 후 8/8 green).
