@@ -1,11 +1,11 @@
 <!-- AGENTS.md — Codex가 읽는 운영 헌법. CLAUDE.md와 동일 유지. -->
-# <프로젝트명> — 운영 헌법 (Ralphthon Busan · Track <N>)
+# codex-ralph 출발선 — 운영 헌법 (Ralphthon Busan · Track 1)
 
 ## 미션 (북극성 — 표류 의심되면 이 절부터 다시 읽기)
-<한 줄 미션>. 진실원: `adapter/SPEC.md`(기계 체크리스트) · `PROGRESS.md`(진척·막힘후보).
+Codex /goal 위에 기계 판정 verify 게이트를 단 설치형 하네스(codex-ralph)를 행사장에서 구현·출품한다. 진실원: `adapter/SPEC.md`(기계 체크리스트) · `PROGRESS.md`(진척·막힘후보).
 
 ## 반환각 앵커 (틀리면 안 되는 사실 — 숫자로 못 박기)
-- 골든 시드: <N>건. Not <N±1>.
+- 합격 기준: 스모크 16종(verify 8 + backlog 8). Not 15, not 17.
 - 살아있는 S-ID: SPEC.md의 `- [S<n>]` 줄이 전부다. 그 외는 산문.
 - <행사 금지목록: RAG·Streamlit·Image Analyzer·교육챗봇·채용스크리너·영양코치·성격분석 — 절대 금지>
 

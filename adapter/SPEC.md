@@ -13,7 +13,7 @@
 - [S2] 루프층 = Codex `/goal` **objective 주입** (정찰 확정 6/7: continuation.md는 바이너리 임베드 — 편집 불가!):
   `/goal` objective에 "완료 조건 = `bash harness/verify.sh`가 VERIFY GREEN + 큐 소진. 그 전에 update_goal(complete) 금지"를 박는다
   (define-goal SKILL 공식 패턴: verification evidence를 objective에). AGENTS.md가 이중 앵커.
-- [S2b] **셸 폴백 루프 (보험 1순위 — /goal 의미론이 어긋날 때)**: `codex_loop.sh` ~20줄 —
+  - (S2 폴백 보험 — S-ID 아님) **셸 폴백 루프 (보험 1순위 — /goal 의미론이 어긋날 때)**: `codex_loop.sh` ~20줄 —
   `while ! bash harness/verify.sh; do codex exec resume --last "verify 출력 보고 미완 항목 계속" </dev/null; done`
   T+10분 /goal 실기동이 실패하면 즉시 이 경로로 강등 (데모 서사는 동일: "기계가 채점관")
 - [S3] verify 스모크 8종 green (T1~T8 — GREEN·완성성·재현성·탬퍼·opt-out·테스트게이트·빈보호집합·dev비파괴)
