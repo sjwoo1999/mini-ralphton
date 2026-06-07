@@ -1,6 +1,7 @@
 import {
   cafes,
   filterByName,
+  filterNightStudyPreset,
   filterByOutlets,
   HONGDAE_STATION,
   sortByDistance,
@@ -17,16 +18,19 @@ export interface CafeUiState {
   outlets: OutletFilter
   query: string
   sort: SortMode
+  nightPreset: boolean
 }
 
 export const DEFAULT_UI_STATE: CafeUiState = {
   outlets: 'all',
   query: '',
   sort: 'score',
+  nightPreset: false,
 }
 
 export function getVisibleCafes(list: Cafe[], state: CafeUiState): Cafe[] {
   let result = list
+  if (state.nightPreset) result = filterNightStudyPreset(result)
   if (state.outlets !== 'all') result = filterByOutlets(result, state.outlets)
   result = filterByName(result, state.query)
   return state.sort === 'distance' ? sortByDistance(result, HONGDAE_STATION) : sortByScore(result)
@@ -38,6 +42,7 @@ export function summarizeFilters(state: CafeUiState, count: number): string {
   else if (state.outlets === 'some') parts.push('콘센트 보통 이상')
   else if (state.outlets === 'few') parts.push('콘센트 전체 등급')
   if (state.query.trim()) parts.push(`검색 ${state.query.trim()}`)
+  if (state.nightPreset) parts.push('심야 카공')
   if (parts.length === 0) return `전체 ${count}곳`
   return `${parts.join(' · ')} · ${count}곳`
 }
@@ -84,7 +89,12 @@ export function mountKagongApp(root: HTMLElement): void {
   distanceButton.setAttribute('data-sort-distance', '')
   distanceButton.textContent = '거리순'
 
-  controls.append(outletSelect, searchInput, scoreButton, distanceButton)
+  const nightButton = document.createElement('button')
+  nightButton.type = 'button'
+  nightButton.setAttribute('data-night-preset', '')
+  nightButton.textContent = '심야 카공'
+
+  controls.append(outletSelect, searchInput, scoreButton, distanceButton, nightButton)
 
   const listRoot = document.createElement('div')
   listRoot.setAttribute('data-list-root', '')
@@ -109,6 +119,11 @@ export function mountKagongApp(root: HTMLElement): void {
   })
   distanceButton.addEventListener('click', () => {
     state.sort = 'distance'
+    render()
+  })
+  nightButton.addEventListener('click', () => {
+    state.nightPreset = !state.nightPreset
+    nightButton.setAttribute('aria-pressed', String(state.nightPreset))
     render()
   })
 
